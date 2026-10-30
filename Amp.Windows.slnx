@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Amp.Sdk/Amp.Sdk.csproj" />
+    <Project Path="src/Amp.App/Amp.App.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Amp.Sdk.Tests/Amp.Sdk.Tests.csproj" />
+  </Folder>
+</Solution>

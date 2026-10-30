@@ -1,0 +1,13 @@
+[Bb]in/
+[Oo]bj/
+.vs/
+.idea/
+*.user
+*.suo
+*.binlog
+*.log
+TestResults/
+artifacts/
+AppPackages/
+BundleArtifacts/
+*.pfx

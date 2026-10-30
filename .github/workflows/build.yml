@@ -1,0 +1,42 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  sdk-tests:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Test Amp.Sdk
+        run: dotnet test --project tests/Amp.Sdk.Tests -c Release
+
+  app:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [x64, ARM64]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Publish Amp.App (${{ matrix.platform }})
+        shell: pwsh
+        run: |
+          $rid = "win-$($env:PLATFORM.ToLowerInvariant())"
+          dotnet publish src/Amp.App/Amp.App.csproj -c Release -p:Platform=${{ matrix.platform }} -r $rid -o artifacts/${{ matrix.platform }}
+        env:
+          PLATFORM: ${{ matrix.platform }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Amp-windows-${{ matrix.platform }}
+          path: artifacts/${{ matrix.platform }}
+          if-no-files-found: error

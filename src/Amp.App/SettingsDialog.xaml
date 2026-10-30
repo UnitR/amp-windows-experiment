@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentDialog
+    x:Class="Amp.App.SettingsDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Settings"
+    CloseButtonText="Cancel"
+    DefaultButton="Primary"
+    PrimaryButtonText="Save">
+    <ScrollViewer MaxHeight="560">
+        <StackPanel MinWidth="440" Spacing="14">
+            <TextBox
+                x:Name="CliPathBox"
+                Header="Amp CLI path (leave empty to auto-detect)"
+                PlaceholderText="C:\Users\you\.amp\bin\amp.exe" />
+            <TextBlock
+                x:Name="DetectedPath"
+                FontSize="12"
+                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                IsTextSelectionEnabled="True"
+                TextWrapping="Wrap" />
+
+            <PasswordBox
+                x:Name="ApiKeyBox"
+                Header="API key (optional; otherwise the CLI's own sign-in is used)"
+                PlaceholderText="Stored encrypted for this Windows user" />
+
+            <TextBox x:Name="WorkingDirectoryBox" Header="Default working directory" />
+
+            <Grid ColumnSpacing="12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <ComboBox
+                    x:Name="ExecutorBox"
+                    HorizontalAlignment="Stretch"
+                    Header="Default executor" />
+                <ComboBox
+                    x:Name="ModeBox"
+                    Grid.Column="1"
+                    HorizontalAlignment="Stretch"
+                    Header="Default mode" />
+                <ComboBox
+                    x:Name="EffortBox"
+                    Grid.Column="2"
+                    HorizontalAlignment="Stretch"
+                    Header="Default effort" />
+            </Grid>
+
+            <TextBox
+                x:Name="RunnerIdBox"
+                Header="Runner ID (for the runner executor)"
+                PlaceholderText="From `amp runners list`" />
+
+            <ComboBox
+                x:Name="VisibilityBox"
+                HorizontalAlignment="Stretch"
+                Header="New thread visibility" />
+
+            <ToggleSwitch x:Name="ThinkingToggle" Header="Show thinking blocks" />
+            <ToggleSwitch x:Name="NotificationsToggle" Header="Notify when a turn finishes while the window is in the background" />
+        </StackPanel>
+    </ScrollViewer>
+</ContentDialog>
