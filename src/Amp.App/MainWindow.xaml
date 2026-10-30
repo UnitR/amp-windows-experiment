@@ -291,7 +291,7 @@
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Spacing="8"
-                    Visibility="{x:Bind controls:Formatting.IsEmpty(ViewModel.Conversation.Items.Count), Mode=OneWay}">
+                    Visibility="{x:Bind ViewModel.Conversation.IsEmpty, Mode=OneWay}">
                     <FontIcon
                         FontSize="40"
                         Foreground="{ThemeResource TextFillColorTertiaryBrush}"
@@ -340,7 +340,7 @@
                             MinHeight="44"
                             MaxHeight="220"
                             AcceptsReturn="True"
-                            IsEnabled="{x:Bind controls:Formatting.Not(ViewModel.Conversation.IsRunning), Mode=OneWay}"
+                            IsEnabled="{x:Bind ViewModel.Conversation.IsIdle, Mode=OneWay}"
                             PlaceholderText="Message Amp…"
                             PreviewKeyDown="Composer_PreviewKeyDown"
                             Text="{x:Bind ViewModel.Conversation.Draft, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -352,7 +352,7 @@
                             Command="{x:Bind ViewModel.Conversation.SendCommand, Mode=OneWay}"
                             Style="{StaticResource AccentButtonStyle}"
                             ToolTipService.ToolTip="Send (Enter)"
-                            Visibility="{x:Bind controls:Formatting.Not(ViewModel.Conversation.IsRunning), Mode=OneWay}">
+                            Visibility="{x:Bind ViewModel.Conversation.IsIdle, Mode=OneWay}">
                             <FontIcon FontSize="16" Glyph="&#xE724;" />
                         </Button>
                         <Button

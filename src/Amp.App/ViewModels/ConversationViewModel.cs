@@ -9,12 +9,25 @@ using CommunityToolkit.Mvvm.Input;
 namespace Amp.App.ViewModels;
 
 /// <summary>One thread: its transcript, the composer draft, and the currently running turn.</summary>
-public sealed partial class ConversationViewModel(AmpService amp, AppSettings settings) : ObservableObject
+public sealed partial class ConversationViewModel : ObservableObject
 {
     private static readonly JsonSerializerOptions Pretty = new() { WriteIndented = true };
 
+    private readonly AmpService amp;
+    private readonly AppSettings settings;
     private CancellationTokenSource? _turn;
     private readonly Dictionary<string, ToolCallItem> _toolCalls = new();
+
+    public ConversationViewModel(AmpService amp, AppSettings settings)
+    {
+        this.amp = amp;
+        this.settings = settings;
+        Mode = settings.DefaultMode;
+        Effort = string.IsNullOrEmpty(settings.DefaultEffort) ? "default" : settings.DefaultEffort;
+        Executor = settings.DefaultExecutor;
+        WorkingDirectory = settings.DefaultWorkingDirectory;
+        Items.CollectionChanged += (_, _) => OnItemsChanged();
+    }
 
     public ObservableCollection<TranscriptItem> Items { get; } = [];
 
@@ -29,7 +42,13 @@ public sealed partial class ConversationViewModel(AmpService amp, AppSettings se
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(SendCommand))]
     [NotifyCanExecuteChangedFor(nameof(CancelCommand))]
+    [NotifyPropertyChangedFor(nameof(IsIdle))]
     public partial bool IsRunning { get; set; }
+
+    public bool IsIdle => !IsRunning;
+
+    /// <summary>True while the transcript has no rows; drives the empty-state hint.</summary>
+    public bool IsEmpty => Items.Count == 0;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(SendCommand))]
@@ -38,18 +57,18 @@ public sealed partial class ConversationViewModel(AmpService amp, AppSettings se
     [ObservableProperty]
     public partial bool IsLoadingHistory { get; set; }
 
-    /// <summary>Per-thread overrides of the settings defaults. Null means "use settings".</summary>
+    /// <summary>Per-thread overrides of the settings defaults, initialised from settings in the constructor.</summary>
     [ObservableProperty]
-    public partial string Mode { get; set; } = settings.DefaultMode;
+    public partial string Mode { get; set; } = "";
 
     [ObservableProperty]
-    public partial string Effort { get; set; } = string.IsNullOrEmpty(settings.DefaultEffort) ? "default" : settings.DefaultEffort;
+    public partial string Effort { get; set; } = "";
 
     [ObservableProperty]
-    public partial string Executor { get; set; } = settings.DefaultExecutor;
+    public partial string Executor { get; set; } = "";
 
     [ObservableProperty]
-    public partial string WorkingDirectory { get; set; } = settings.DefaultWorkingDirectory;
+    public partial string WorkingDirectory { get; set; } = "";
 
     public string? ThreadUrl => ThreadId is null ? null : $"https://ampcode.com/threads/{ThreadId}";
     public bool HasThread => ThreadId is not null;
@@ -207,4 +226,6 @@ public sealed partial class ConversationViewModel(AmpService amp, AppSettings se
         Items.Add(item);
         ItemAppended?.Invoke();
     }
+
+    private void OnItemsChanged() => OnPropertyChanged(nameof(IsEmpty));
 }
