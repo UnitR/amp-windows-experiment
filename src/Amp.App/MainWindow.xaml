@@ -253,20 +253,26 @@
                         Orientation="Horizontal"
                         Spacing="8">
                         <ComboBox
+                            x:Name="ExecutorBox"
                             MinWidth="110"
                             Header="Executor"
                             ItemsSource="{x:Bind Executors}"
-                            SelectedItem="{x:Bind ViewModel.Conversation.Executor, Mode=TwoWay}" />
+                            SelectedItem="{x:Bind ViewModel.Conversation.Executor, Mode=OneWay}"
+                            SelectionChanged="Picker_SelectionChanged" />
                         <ComboBox
+                            x:Name="ModeBox"
                             MinWidth="110"
                             Header="Mode"
                             ItemsSource="{x:Bind Modes}"
-                            SelectedItem="{x:Bind ViewModel.Conversation.Mode, Mode=TwoWay}" />
+                            SelectedItem="{x:Bind ViewModel.Conversation.Mode, Mode=OneWay}"
+                            SelectionChanged="Picker_SelectionChanged" />
                         <ComboBox
+                            x:Name="EffortBox"
                             MinWidth="110"
                             Header="Effort"
                             ItemsSource="{x:Bind Efforts}"
-                            SelectedItem="{x:Bind ViewModel.Conversation.Effort, Mode=TwoWay}" />
+                            SelectedItem="{x:Bind ViewModel.Conversation.Effort, Mode=OneWay}"
+                            SelectionChanged="Picker_SelectionChanged" />
                     </StackPanel>
                 </Grid>
 

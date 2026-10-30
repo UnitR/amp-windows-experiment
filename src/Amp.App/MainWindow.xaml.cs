@@ -73,6 +73,15 @@ public sealed partial class MainWindow : Window
         if (send.CanExecute(null)) send.Execute(null);
     }
 
+    private void Picker_SelectionChanged(object sender, Microsoft.UI.Xaml.Controls.SelectionChangedEventArgs e)
+    {
+        if (sender is not Microsoft.UI.Xaml.Controls.ComboBox { SelectedItem: string value } box) return;
+        var conversation = ViewModel.Conversation;
+        if (box == ExecutorBox) conversation.Executor = value;
+        else if (box == ModeBox) conversation.Mode = value;
+        else if (box == EffortBox) conversation.Effort = value;
+    }
+
     private async void PickFolder_Click(object sender, RoutedEventArgs e)
     {
         var picker = new Windows.Storage.Pickers.FolderPicker();
