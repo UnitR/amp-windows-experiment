@@ -1,14 +1,38 @@
+# .NET build and publish output
 [Bb]in/
 [Oo]bj/
+artifacts/
+AppPackages/
+BundleArtifacts/
+
+# IDE state and user-specific settings
 .vs/
 .idea/
 *.user
 *.suo
+*.sln.docstates
+
+# Test results, coverage, and diagnostic logs
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
 *.binlog
 *.log
-TestResults/
-artifacts/
-AppPackages/
-BundleArtifacts/
+
+# Local secrets and signing keys
+.env
+.env.*
+!.env.example
+!.env.*.example
 *.pfx
-.amp/portals/*
+*.p12
+
+# Local Amp captures and portal metadata
+.amp/in/
+.amp/portals/
+
+# Operating-system metadata
+.DS_Store
+Thumbs.db
+Desktop.ini
