@@ -1,7 +1,6 @@
 using Amp.App.Services;
 using Amp.App.ViewModels;
 using Amp.Sdk;
-using Microsoft.UI.Dispatching;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Input;
@@ -46,7 +45,7 @@ public sealed partial class MainWindow : Window
     }
 
     private void ScrollToEnd() =>
-        DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () =>
+        DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
         {
             TranscriptScroller.UpdateLayout();
             TranscriptScroller.ChangeView(null, TranscriptScroller.ScrollableHeight, null, disableAnimation: true);
