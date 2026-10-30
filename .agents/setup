@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
+SECONDS=0
+
+echo "Checking .NET system prerequisites"
+packages=(ca-certificates curl python3 libc6 libgcc-s1 libgssapi-krb5-2 libicu72 libssl3 libstdc++6 zlib1g)
+missing=()
+for package in "${packages[@]}"; do
+  if [[ "$(dpkg-query -W -f='${Status}' "$package" 2>/dev/null || true)" != 'install ok installed' ]]; then
+    missing+=("$package")
+  fi
+done
+if ((${#missing[@]})); then
+  sudo apt-get update
+  sudo env DEBIAN_FRONTEND=noninteractive apt-get install -y "${missing[@]}"
+fi
+echo "System prerequisites ready (${SECONDS}s)"
+
+export DOTNET_ROOT="$HOME/.dotnet"
+export PATH="$DOTNET_ROOT:$PATH"
+sdk_version="$(python3 -c 'import json; print(json.load(open("global.json"))["sdk"]["version"])')"
+if [[ ! -d "$DOTNET_ROOT/sdk/$sdk_version" ]]; then
+  echo "Installing .NET SDK $sdk_version"
+  installer="$(mktemp)"
+  trap 'rm -f "$installer"' EXIT
+  curl --fail --silent --show-error --location --retry 3 https://dot.net/v1/dotnet-install.sh -o "$installer"
+  bash "$installer" --version "$sdk_version" --install-dir "$DOTNET_ROOT" --no-path
+fi
+
+# Amp and supervised services use separate non-interactive login shells.
+profile_marker='# Amp Windows orb .NET toolchain'
+if ! grep -Fqx "$profile_marker" "$HOME/.bash_profile" 2>/dev/null; then
+  cat >> "$HOME/.bash_profile" <<'EOF'
+
+# Amp Windows orb .NET toolchain
+export DOTNET_ROOT="$HOME/.dotnet"
+case ":$PATH:" in
+  *":$DOTNET_ROOT:"*) ;;
+  *) export PATH="$DOTNET_ROOT:$PATH" ;;
+esac
+EOF
+fi
+echo ".NET SDK $(dotnet --version) ready (${SECONDS}s)"
+
+# The WinUI app requires Windows build tools; only the SDK and its tests run on Linux.
+echo "Restoring SDK test dependencies"
+dotnet restore tests/Amp.Sdk.Tests/Amp.Sdk.Tests.csproj --verbosity minimal
+echo "Orb setup complete (${SECONDS}s)"

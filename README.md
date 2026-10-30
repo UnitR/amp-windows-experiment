@@ -41,6 +41,23 @@ $env:AMP_SDK_INTEGRATION = "1"
 dotnet test --project tests/Amp.Sdk.Tests -- --filter-class "*RealCliIntegrationTests"
 ```
 
+## Working in Amp orbs
+
+`.agents/setup` installs the .NET SDK pinned in `global.json` and restores the SDK test
+dependencies. Amp caches the toolchain and NuGet packages in its project snapshot;
+repeated setup runs reuse them. The SDK is also available in new login shells.
+`.agents/resume` intentionally does no installation or authentication on wake.
+
+On a Linux orb, run the cross-platform SDK tests with:
+
+```bash
+dotnet test --project tests/Amp.Sdk.Tests -c Release --no-restore
+```
+
+The WinUI app still requires Windows to build and run; use the Windows CI jobs for
+app builds. Live CLI integration tests remain opt-in and require authentication;
+orb setup does not sign in or create threads.
+
 ## How the app talks to Amp
 
 Each message you send starts one `amp --execute --stream-json` process (with `threads continue <id>` for follow-ups),

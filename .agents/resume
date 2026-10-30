@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# The SDK and NuGet cache persist in the snapshot. No services or authentication
+# need repair on wake; keep installs and restores in setup, not here.

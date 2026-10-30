@@ -11,3 +11,4 @@ artifacts/
 AppPackages/
 BundleArtifacts/
 *.pfx
+.amp/portals/*
